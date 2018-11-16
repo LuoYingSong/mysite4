@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .outer {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            font-family: helvetica, arial, 微软雅黑, 华文黑体;
+        }
+
+        .bottom {
+            height: 10%;
+            background-color: #2697eb;
+        }
+
+        /*.body {*/
+        /*height: 70%;*/
+        /*!*border: 1px red solid;*!*/
+        /*}*/
+
+        .body-left {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 15%;
+            height: 90%;
+            overflow-y: scroll;
+            background-color: #ebebec;
+
+        }
+
+        .body-left::-webkit-scrollbar {
+            background-color: #ebebec;
+
+        }
+
+        .body-right {
+            height: 90%;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            overflow-y:hidden;
+            overflow-x:hidden
+
+        }
+.head-left{
+    float: left;
+}
+        /*.head-right{*/
+           /*position: absolute;*/
+            /*top: 40%;*/
+            /*left: 0;*/
+        /*}*/
+        a{
+            text-decoration: none;
+
+        }
+        .head-left{
+            position: relative;
+            top: 30%;
+            left: 0;
+            padding-left:10px ;
+            color:#d1d6ea;
+        }
+        .head-right{
+            float: right;
+            padding-left: 10px;
+            color:#d1d6ea;
+        }
+
+        .info-inner{
+            float: left;
+            height: 50px;
+            width: 25%;
+            background-color: #ebebec;
+        }
+        .talk-inner{
+            float: right;
+            height: 50px;
+            width: 75%;
+            background-color: #ebebec;
+        }
+        .name-inner{
+            height: 60%;
+            font-size: 25px;
+            font-family: SimHei;
+            background-color: #ebebec;
+        }
+        .talk-info{
+            position: relative;
+            font-size: 12px;
+            top: 1px;
+
+        }
+        .del-inner{
+            float: right;
+            position: relative;
+            top: -60%;
+
+        }
+        .right-info{
+            height: 7%;
+            width: 100%;
+            border-bottom: #ebebec solid 0.5px;
+            /*overflow-y: scroll;*/
+        }
+        .right-talk{
+            height: 70%;
+            width: 100%;
+            border: red solid 1px;
+            overflow-y: scroll;
+        }
+        .right-input{
+            height: 23%;
+            width: 100%;
+            border: red solid 1px;
+        }
+        .right-info .username{
+            float: left;
+            font-size: 35px;
+            font-weight: 500;
+            color: black;
+        }
+        .right-info .setting{
+            float: right;
+            color: black;
+        }
+        .user-info{
+            position: relative;
+            right: 0;
+            float: right;
+            width: 100%;
+            text-align: right;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            padding-left: 3px;
+            padding-right: 3px;
+        }
+        .user-talk{
+            float: right;
+            max-width: 60%;
+            height: auto;
+            background-color: #2884f5;
+            color: white;
+            border-right: 40px white solid;
+
+        }
+        .hetalk .user-info{
+            float: left;
+            text-align: left;
+        }
+        .hetalk .user-talk{
+            float: left;
+            border-left: 40px white solid;
+        }
+        .mytalk{
+            width: 100%;
+            height: auto;
+            /*border: 1px black solid;*/
+
+        }
+        .right-talk::-webkit-scrollbar {
+            display: none;
+
+        }
+    </style>
+    <script src="/static/jquery-3.3.1.js"></script>
+    <script>
+        function send() {
+
+        }
+    </script>
+</head>
+<body>
+
+<div class="outer">
+    <div class="bottom">
+        <a class="head-left" href="">个人信息</a><!-- 头像可改 -->
+        <form class="head-left" action="#" method="POST">
+            <input type="text" name="id" size="10px">
+            <input type="submit">
+        </form>
+
+        <a class="head-right setting" href="">设置</a>
+        <a class="head-right unlogin" href="">注销</a>
+        <a class="head-right setting" href="">username</a>
+    </div>
+    <div class="body">
+        <div class="body-left">
+            <div class="info-outer">
+                <div class="info-inner"></div>
+                <div class="talk-inner">
+                    <div class="name-inner">abc</div>
+                    <div class="talk-info">[图片]</div>
+                    <div class="del-inner">x</div>
+                </div>
+            </div>
+        </div>
+        <div class="body-right">
+            <div class="right-info">
+                <a href=""><div class="username">username</div></a>
+                <a href=""><div class="setting">setting</div></a>
+            </div>
+            <div class="right-talk">
+                <div class="mytalk">
+                    <div class="user-info">name</div>
+                    <div class="user-talk">//3.
+<br>
+                        git commit -m '提一次提交' => git commit -m. 不想写消息 -m.
+                        <br>
+                        git commit . -m.  =>  git add -a && git commit -m.
+                        <br>
+                        // 远程
+                        git pull 拉取
+                        git push 推送
+                        <br>
+                        <br>
+                        git 分支
+                        <br>
+                        Git鼓励大量使用分支：
+                        <br>
+                        查看分支：git branch
+
+
+
+
+
+
+                            删除远程分支 git push -d origin part2
+
+                            ##丢弃你本地的所有改动与提交，可以到服务器上获取最新的
+                            git fetch origin
+                            git reset --hard origin/master
+
+
+                            流程，
+                            1. 把主分支 更新到最新   (切记)
+
+                            2. 从主分支 拉取分支
+                            3. 在分支上 写代码
+                            4. 写完后 切换到 主分支 更新到 最新  (切记)
+                            5. 把分支 合并到 主分支 （解决版本冲突 可能产生）
+                            6. 推送远程
+                    </div>
+                </div>
+                <div class="hetalk">
+                    <div class="user-info">aaaa</div>
+                    <div class="user-talk">lzxkcljkzjckljczklxcnlzncx</div>
+                </div>
+            </div>
+            <div class="right-input">
+                <input type="text" style="height: 80%;width: 100%">
+                <div onclick="send(this)" style="float: right">发送</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

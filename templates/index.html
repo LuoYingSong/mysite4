@@ -3,8 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        body {
+            border: 0;
+        }
+
+        input::-webkit-input-placeholder{
+            font-size: 14px;
+            line-height: 16px;
+            color: #aaa;
+        }
+        input{
+            padding: 3px;
+            font-size: 14px;
+            color: black;
+            border-radius:3px;
+            border: solid 0.4px #aaa;
+        }
+        .index_head {
+            line-height: 160px;
+            text-align: center;
+            font-size: 32px;
+            height: 170px;
+        }
+
+        .index_body {
+            position: relative;
+            height: 100%;
+            top: 50%;
+        }
+
+        .body_title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 16px;
+            text-align: center;
+            padding-bottom: 5px;
+            /*border: 1px red solid;*/
+        }
+
+        .body_info {
+            font-size: 16px;
+            color: #666;
+            text-align: center;
+        }
+
+        .second-space {
+            height: 30px;
+        }
+
+        .third-space {
+            height: 40px;
+        }
+
+        .id {
+            height: 20px;
+            text-align: center;
+            /*height: 20px;*/
+            display: block;
+            border: none;
+        }
+
+        .sub {
+            color: white;
+            display: inline-block;
+            position: relative;
+            top: 30px;
+            height:37px;
+            background-color: #85cd36;
+            width: 272px;
+            border: none;
+        }
+
+        .bottom{
+            padding-top: 50px;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            color: #666;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a{
+            color: #bfbfbf;
+        }
+
+        .dotted{
+            color: #bfbfbf;
+            margin: 0 5px;
+        }
+        .inner-info{
+            float: left;
+
+            font-size: 12px;
+            text-decoration:none;
+        }
+        .safe-input{
+            color: #3682cd;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-<h1> hello {{t}}</h1>
+<div class="index_head">Smart QQ</div>
+<div class="index_body">
+    <div class="body_title">帐号密码登录</div>
+    <div class="space first-space"></div>
+    <div class="body_info">推荐使用<a class="safe-input" href="">快速安全登录</a>，防止盗号。</div>
+    <div class="space second-space"></div>
+    <div>
+        <form action="#" method="post">
+            <div class="id_info">
+                <div class="id"><input placeholder="支持QQ号/邮箱/手机号登录" class=input type="text" name="user_id"
+                                       style="width:272px;height:32px; "></div>
+                <div class="third-space"></div>
+                <div class="id"><input placeholder="密码" type="password" name="user_pwd"  style="width:272px;height:32px; "></div>
+                <div class="id submit"><input type="submit" value="登录" class="sub"></div>
+            </div>
+        </form>
+    </div>
+    <div class="space third_space"></div>
+</div>
+<div class="bottom">
+    <div class="inner-info">
+        <a href="#">
+            忘记密码？
+        </a>
+    </div>
+    <span class="inner-info" class="dotted">|</span>
+    <div class="inner-info" >
+        <a href="#">注册新账号</a>
+    </div >
+    <span class="inner-info" class="dotted">|</span>
+    <div class="inner-info">
+        <a href="#">意见反馈</a>
+    </div>
+</div>
 </body>
 </html>
