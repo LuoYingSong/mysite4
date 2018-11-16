@@ -33,6 +33,7 @@ def delete(req):
 
 def add(req):
     name = "success"
+    print("test")
     book_obj = Book.objects.get(id=1)
     author_obj = Author.objects.all()
     book_obj.author.add(*author_obj)
