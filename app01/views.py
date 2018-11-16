@@ -1,4 +1,4 @@
-from django.shortcuts import render,HttpResponse
+from django.shortcuts import render,HttpResponse,redirect
 from django.http import JsonResponse
 import json
 import time
@@ -7,35 +7,30 @@ from app01.models import *
 # Create your views here.
 
 
-def show_time(req):
-    t = time.ctime()
-    return render(req,"index.html",{"t":t})
+def index(req):
+    if not req.session["is_login"]:
+        if req.method == "POST":
+            userID = req.POST.get("user_id")
+            pwd = req.POST.get("user_pwd")
+            if isinstance(pwd,int):
+                if pwd>10000:
+                    db_pwd = user_info.objects.filter(phone=userID).values("pwd")[0].get("pwd")
+                else:
+                    db_pwd = user_info.objects.filter(id=userID).values("pwd")[0].get("pwd")
+            else:
+                db_pwd = user_info.objects.filter(email=userID).values("pwd")[0].get("pwd")
+            if db_pwd == pwd:
+                req.session["is_login"] = True
+                req.session["userID"] = userID
+                return HttpResponse(req,"success")
+        return render(req,"index.html")
+    else:
+        return redirect("/main/")
 
-def login(req):
-    if req.method=="POST":
-        if 1:
-            # return redirect("/yuan_back/")
-            name="yuanhao"
-
-            return render(req,"back.html",locals())
-
-    return render(req,"login.html",locals())
-
-def test(req):
-
-    return render(req,"back.html",locals())
-
-def delete(req):
-    name = "success"
-    book = Book(title="abook")
-    book.save()
-    return render(req,"back.html",locals())
-
-def add(req):
-    name = "success"
-    print("test")
-    book_obj = Book.objects.get(id=1)
-    author_obj = Author.objects.all()
-    book_obj.author.add(*author_obj)
-    return render(req,"back.html",locals())
+def main(request):
+    if request.session["is_login"]:
+        username = user_info.objects.filter(id = request.session["userID"]).values("userName")[0]["userName"]
+        return render(request,"main.html",locals())
+    else:
+        return redirect("/index/")
 

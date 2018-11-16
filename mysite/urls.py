@@ -17,11 +17,9 @@ from django.contrib import admin
 from django.urls import path
 from app01 import views
 from django.conf.urls import url
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^show_time/',views.show_time),
-    url(r'login/', views.login),
-    url(r'test/',views.test),
-    url(r'delete/',views.delete),
-    url(r'add/',views.add)
+    url(r'^index/', views.index),
+    url(r'^main/', views.main),
 ]
