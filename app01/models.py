@@ -13,9 +13,9 @@ class user_info(models.Model):
 
 class talk_info(models.Model):
     userID = models.IntegerField()
-    friendID = models.IntegerField()#逗号分隔的所有朋友信息
-    talkInfo = models.TextField()
+    friendID = models.ForeignKey(user_info,on_delete=models.SET_NULL,blank=True, null=True)#逗号分隔的所有朋友信息
+    talkInfo = models.TextField(null=True)
     msgType = models.IntegerField(default=1)#消息类型 留作日后修改的空间
-    createTime = models.TimeField()
+    createTime = models.DateTimeField()
 
 

@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -96,12 +97,15 @@
             position: relative;
             font-size: 12px;
             top: 1px;
-
+            overflow: hidden;
+            height: 100%;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
         .del-inner{
             float: right;
             position: relative;
-            top: -60%;
+            top: -115%;
 
         }
         .right-info{
@@ -141,6 +145,7 @@
             padding-bottom: 10px;
             padding-left: 3px;
             padding-right: 3px;
+
         }
         .user-talk{
             float: right;
@@ -170,13 +175,50 @@
 
         }
     </style>
-    <script src="/static/jquery-3.3.1.js"></script>
+    <script src="{% static 'jquery-3.3.1.js' %}"></script>
     <script>
         function send() {
+            console.log("send")
+        }
+        function changFriend(arg) {
+            var friendID = arg.getElementsByClassName("friend-id")[0].innerHTML;
+            var userID = document.getElementsByClassName("username")[0].innerText;
+            var _this = this;
+                $.ajax(
+                    {
+                        url:'/get_talk/',
+                        type:'POST',
+                        data:{"userID":userID,"friendID":friendID},
+                        success:function (arg) {
+                            $(".right-talk").empty();
+                            var list = eval(arg);
+                            for(i=0;i<list.length;i++)
+                            {
 
+                                if(list[i]["userID"] == userID)
+                                {
+                                    var userinfo = $("<div></div>").addClass("user-info").text(list[i]["friendID__userName"]);
+                                    var user_talk = $("<div></div>");
+                                    user_talk.addClass("user-talk");
+                                    user_talk.text(list[i]["talkInfo"]);
+                                    var content = $("<div></div>");
+                                    content.addClass("mytalk");
+                                    content.append(userinfo);
+                                    content.append(user_talk);
+                                    $(".right-talk").append(content)
+                                }
+                                else
+                                {
+
+                                }
+                            }
+                        }
+                    }
+                )
         }
     </script>
 </head>
+
 <body>
 
 <div class="outer">
@@ -189,17 +231,20 @@
 
         <a class="head-right setting" href="">设置</a>
         <a class="head-right unlogin" href="">注销</a>
-        <a class="head-right setting" href="">{{username}}</a>
+        <a class="head-right setting username" href="">{{username}}</a>
     </div>
     <div class="body">
         <div class="body-left">
             <div class="info-outer">
                 <div class="info-inner"></div>
-                <div class="talk-inner">
-                    <div class="name-inner">abc</div>
-                    <div class="talk-info">[图片]</div>
+                {% for each_friend in friend_info_list %}
+                <div class="talk-inner" onclick="changFriend(this)">
+                    <div class="name-inner">{{ each_friend.talk_name }}</div>
+                    <div class="talk-info">{{ each_friend.detail }}</div>
+                    <div class="friend-id" style="display: none">{{ each_friend.id }}</div>
                     <div class="del-inner">x</div>
                 </div>
+                {% endfor %}
             </div>
         </div>
         <div class="body-right">
@@ -209,50 +254,24 @@
             </div>
             <div class="right-talk">
                 <div class="mytalk">
-                    <div class="user-info">name</div>
-                    <div class="user-talk">//3.
-<br>
-                        git commit -m '提一次提交' => git commit -m. 不想写消息 -m.
-                        <br>
-                        git commit . -m.  =>  git add -a && git commit -m.
-                        <br>
-                        // 远程
-                        git pull 拉取
-                        git push 推送
-                        <br>
-                        <br>
-                        git 分支
-                        <br>
-                        Git鼓励大量使用分支：
-                        <br>
-                        查看分支：git branch
+                    {% for each_talk in friend_info_list %}
+                        {% if each_talk. %}
+                    <div class="user-info">
 
+                    </div>
+                    <div class="user-talk">
 
-
-
-
-
-                            删除远程分支 git push -d origin part2
-
-                            ##丢弃你本地的所有改动与提交，可以到服务器上获取最新的
-                            git fetch origin
-                            git reset --hard origin/master
-
-
-                            流程，
-                            1. 把主分支 更新到最新   (切记)
-
-                            2. 从主分支 拉取分支
-                            3. 在分支上 写代码
-                            4. 写完后 切换到 主分支 更新到 最新  (切记)
-                            5. 把分支 合并到 主分支 （解决版本冲突 可能产生）
-                            6. 推送远程
                     </div>
                 </div>
                 <div class="hetalk">
-                    <div class="user-info">aaaa</div>
-                    <div class="user-talk">lzxkcljkzjckljczklxcnlzncx</div>
+                    <div class="user-info">
+
+                    </div>
+                    <div class="user-talk">
+
+                    </div>
                 </div>
+                {% endfor %}
             </div>
             <div class="right-input">
                 <input type="text" style="height: 80%;width: 100%">

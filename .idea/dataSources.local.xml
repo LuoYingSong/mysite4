@@ -11,9 +11,5 @@
       <user-name>root</user-name>
       <introspection-schemas>*:@</introspection-schemas>
     </data-source>
-    <data-source name="db" uuid="9235468c-8320-42c6-975b-a296280574d5">
-      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" family="SQLITE" exact-version="0.0" />
-      <introspection-schemas>*:@</introspection-schemas>
-    </data-source>
   </component>
 </project>

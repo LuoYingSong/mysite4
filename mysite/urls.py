@@ -22,4 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^index/', views.index),
     url(r'^main/', views.main),
+    url(r"^iforget/", views.iforget),
+    url(r"^register/", views.register),
+    url(r"^get_talk/", views.get_talk),
 ]
