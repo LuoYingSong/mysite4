@@ -25,4 +25,8 @@ urlpatterns = [
     url(r"^iforget/", views.iforget),
     url(r"^register/", views.register),
     url(r"^get_talk/", views.get_talk),
+    url(r"^send_msg/", views.send_msg),
+    url(r"unlogin/", views.unlogin),
+    url(r"user_detail", views.user_detail),
+    url(r"change_info",views.change_info)
 ]

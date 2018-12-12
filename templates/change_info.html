@@ -1,0 +1,83 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ user_show_info.userName }}</title>
+    <style>
+        a {
+            text-decoration: none;
+            font-size: larger;
+            color: gray;
+        }
+
+        .container {
+            margin: 10% 40% 0 40%;
+            text-align: center;
+            border: 0;
+        }
+
+        .info-container {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 1%;
+            margin-left: 30%;
+        }
+
+        .head {
+            background-image: url("{% static 'img/user_info_picture/' %}{{ user_id }}.png");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            width: 100%;
+            height: 380px;
+            display: flex;
+            flex-direction: row-reverse;
+        }
+
+        #back {
+            margin-left: 3%;
+            color: gray;
+            margin-top: -4px;
+            margin-right: 2%;
+
+        }
+
+        #change {
+            color: gray;
+        }
+
+        .info-type {
+            margin-right: 2%;
+            color: #bfbfbf;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div class="container">
+        <div class="head">
+            <div id="back"><a href="/main/">x</a></div>
+        </div>
+     <form action="/change_info/" method="post" enctype="multipart/form-data">
+        <div class="info-container">
+            <div class="info-type">账号</div>
+            <div class="info-detail"><input type="text" value="{{ user_id }}" name="user_id" readonly="readonly"></div>
+        </div>
+            {% for k,v in user_show_info.items %}
+        <div class="info-container">
+            <div class="info-type">{{ k }}</div>
+            <div class="info-detail"><input type="text" value="{{ v }}" name="{{ k }}"></div>
+        </div>
+        {% endfor %}
+        <div class="info-container">
+            <input type="file" name="img">
+        </div>
+        <div class="info-container">
+            <input type="submit" >
+        </div>
+        </form>
+
+    </div>
+</div>
+</body>
+</html>

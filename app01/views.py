@@ -43,7 +43,7 @@ def index(req):
 def main(request):
     if request.session.get("is_login", None):
         id = request.session["user_id"]
-        friend_list = user_info.objects.filter(id=1).values_list("friendsID")[0][0].split(',')
+        friend_list = user_info.objects.filter(id=id).values_list("friendsID")[0][0].split(',')
         friend_list = list(map(lambda x: int(x), friend_list))
         friend_info_list = []  # {flag：1,detail:talk_info}#1为对方 0为自己
         for each_friend_id in friend_list:
@@ -73,11 +73,14 @@ def get_talk(req):
     user_id = req.POST.get("userID")
     friend_id = req.POST.get("friendID")
     get_talk_info = list(talk_info.objects.filter(
-        Q(userID=user_id) & Q(friendID=friend_id) | Q(userID=friend_id) & Q(friendID=user_id)).values("talkInfo","userID","msgType","createTime","friendID__userName"))
+        Q(userID=user_id) & Q(friendID=friend_id) | Q(userID=friend_id) & Q(friendID=user_id)).values("talkInfo",
+                                                                                                      "userID",
+                                                                                                      "msgType",
+                                                                                                      "createTime",
+                                                                                                      "friendID__userName"))
     for each_talk in get_talk_info:
         each_talk["createTime"] = time.mktime(each_talk["createTime"].timetuple())
-    get_talk_info.sort(key=lambda x:x["createTime"])
-    print(get_talk_info)
+    get_talk_info.sort(key=lambda x: x["createTime"])
     return HttpResponse(json.dumps(get_talk_info))
 
 
@@ -122,3 +125,83 @@ def register(req):
         except:
             return HttpResponse("错误的输入")
     return render(req, "register.html")
+
+
+def send_msg(req):
+    if not req.FILES:
+        rec_user_name = req.POST.get("msg_to")
+        rec_id = user_info.objects.filter(userName=rec_user_name).values_list("id")[0][0]
+        send_id = req.POST.get("msg_from")[0]
+        msg = req.POST.get("msg_info")
+        msg_type = req.POST.get("msg_type")[0]
+        if req.POST["msg_type"] == 1:
+            talk_info.objects.create(userID=rec_id, friendID_id=send_id, talkInfo=msg, msgType=msg_type,
+                                     createTime=datetime.datetime.now())
+        else:
+            file_name = req.POST["file"]
+            talk_info.objects.create(userID=rec_id, friendID_id=send_id, talkInfo=msg, msgType=msg_type,
+                                     createTime=datetime.datetime.now())
+        return HttpResponse("success")
+    else:
+        file_name = req.FILES["files"]
+        with open("./static/img/talk_img/"+file_name ,"w")as f:
+            for line in req.FILES.get("files").chunks():
+                f.write(line)
+
+
+def unlogin(req):
+    req.session["is_login"] = False
+    return redirect("/index/")
+
+
+def user_detail(req):
+    user_id = req.GET["user_id"]
+    if req.session["user_id"] != user_id:
+        return HttpResponse("我靠,你在想什么呢小老弟")
+    if_me = True
+    user_show_info_get = user_info.objects.filter(id=user_id).values("id", "phone", "email", "userName", "saying")[0]
+    user_show_info = {
+        "账号": user_show_info_get["id"],
+        "电话": user_show_info_get["phone"],
+        "邮箱": user_show_info_get["email"],
+        "昵称": user_show_info_get["userName"],
+        "签名": user_show_info_get["saying"]
+    }
+    return render(req, "user_detail.html", locals())
+
+
+def change_info(req):
+    if req.method == "POST":
+        user_id = req.session["user_id"]
+        new_phone = req.POST["电话"]
+        new_email = req.POST["邮箱"]
+        new_name = req.POST["昵称"]
+        new_saying = req.POST["签名"]
+        user_info.objects.filter(id=user_id).update(phone=new_phone, email=new_email, userName=new_name,
+                                                    saying=new_saying)
+        img = req.FILES.get("img", None)
+        if not img:
+            pass
+        else:
+            with open("./static/img/user_info_picture/" + str(user_id) + ".png", "wb") as f:
+                for line in img.chunks():
+                    f.write(line)
+        return redirect("/user_detail?user_id=" + str(user_id))
+    else:
+        try:
+            user_id = req.GET["user_id"]
+            if user_id != req.session["user_id"] and not req.session["is_login"]:
+                return HttpResponse("我靠，你又在想什么？")
+            else:
+                user_show_info_get = \
+                user_info.objects.filter(id=user_id).values("id", "phone", "email", "userName", "saying", "info")[0]
+                user_show_info = {
+                    "电话": user_show_info_get["phone"],
+                    "邮箱": user_show_info_get["email"],
+                    "昵称": user_show_info_get["userName"],
+                    "签名": user_show_info_get["saying"]
+                }
+                img_path = user_show_info_get["info"]
+                return render(req, "change_info.html", locals())
+        except KeyError:
+            return HttpResponse("error")

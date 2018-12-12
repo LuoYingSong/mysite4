@@ -1,10 +1,14 @@
 {% load staticfiles %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>{{ username }}</title>
     <style>
+        body::-webkit-scrollbar {
+            display: none
+        }
+
         .outer {
             position: absolute;
             left: 0;
@@ -46,54 +50,61 @@
             right: 0;
             bottom: 0;
             width: 85%;
-            overflow-y:hidden;
-            overflow-x:hidden
+            overflow-y: hidden;
+            overflow-x: hidden
 
         }
-.head-left{
-    float: left;
-}
+
+        .head-left {
+            float: left;
+        }
+
         /*.head-right{*/
-           /*position: absolute;*/
-            /*top: 40%;*/
-            /*left: 0;*/
+        /*position: absolute;*/
+        /*top: 40%;*/
+        /*left: 0;*/
         /*}*/
-        a{
+        a {
             text-decoration: none;
 
         }
-        .head-left{
+
+        .head-left {
             position: relative;
             top: 30%;
             left: 0;
-            padding-left:10px ;
-            color:#d1d6ea;
-        }
-        .head-right{
-            float: right;
             padding-left: 10px;
-            color:#d1d6ea;
+            color: #d1d6ea;
         }
 
-        .info-inner{
+        .head-right {
+            float: right;
+            padding-left: 10px;
+            color: #d1d6ea;
+        }
+
+        .info-inner {
             float: left;
             height: 50px;
             width: 25%;
             background-color: #ebebec;
         }
-        .talk-inner{
+
+        .talk-inner {
             float: right;
             height: 50px;
             width: 75%;
             background-color: #ebebec;
         }
-        .name-inner{
+
+        .name-inner {
             height: 60%;
             font-size: 25px;
             font-family: SimHei;
             background-color: #ebebec;
         }
-        .talk-info{
+
+        .talk-info {
             position: relative;
             font-size: 12px;
             top: 1px;
@@ -102,40 +113,50 @@
             white-space: nowrap;
             text-overflow: ellipsis;
         }
-        .del-inner{
+
+        .del-inner {
             float: right;
             position: relative;
             top: -115%;
 
         }
-        .right-info{
+
+        .right-info {
             height: 7%;
             width: 100%;
             border-bottom: #ebebec solid 0.5px;
             /*overflow-y: scroll;*/
         }
-        .right-talk{
+
+        .right-talk {
             height: 70%;
             width: 100%;
-            border: red solid 1px;
             overflow-y: scroll;
+            position: relative;
         }
-        .right-input{
+
+        .right-input {
             height: 23%;
-            width: 100%;
-            border: red solid 1px;
+            width: 85%;
+            bottom: 0;
+            position: absolute;
+            right: 0;
+
         }
-        .right-info .username{
+
+        .right-info .username {
             float: left;
             font-size: 35px;
             font-weight: 500;
             color: black;
         }
-        .right-info .setting{
+
+        .right-info .setting {
             float: right;
             color: black;
         }
-        .user-info{
+
+        .user-info {
             position: relative;
             right: 0;
             float: right;
@@ -147,7 +168,8 @@
             padding-right: 3px;
 
         }
-        .user-talk{
+
+        .user-talk {
             float: right;
             max-width: 60%;
             height: auto;
@@ -156,65 +178,150 @@
             border-right: 40px white solid;
 
         }
-        .hetalk .user-info{
+
+        .hetalk .user-info {
             float: left;
             text-align: left;
         }
-        .hetalk .user-talk{
+
+        .hetalk .user-talk {
             float: left;
             border-left: 40px white solid;
         }
-        .mytalk{
+
+        .mytalk {
             width: 100%;
             height: auto;
             /*border: 1px black solid;*/
 
         }
+
         .right-talk::-webkit-scrollbar {
             display: none;
+
+        }
+
+        #user-img {
+            position: absolute;
+            height: 10px;
+            width: auto;
 
         }
     </style>
     <script src="{% static 'jquery-3.3.1.js' %}"></script>
     <script>
-        function send() {
-            console.log("send")
+        function send(arg) {
+            var file_name = null;
+            var send_msg = $(".send_msg").val();
+            var msg_type = 1;
+            var msg_to = $(".friend-name")[0].innerText;
+            var msg_from = $(".username")[0].innerText;
+            if (msg_to == ""){
+                alert("未选定用户");
+                return 1
+            }
+            if (document.getElementById("file").files.length) {
+                msg_type = 2;
+                file_name = document.getElementById("file").files[0].name;
+                var file_data = document.getElementById("file").files[0];
+                var form = new FormData;
+                form.append("files",file_data);
+                $.ajax({
+                    url: '/send_msg/',
+                    type: 'POST',
+                    data:form,
+                    contentType:false,
+                    processData:false,
+
+                })
+            }
+            $.ajax(
+                {
+                    url: '/send_msg/',
+                    type: 'POST',
+                    data: {
+                        "msg_info": send_msg,
+                        "msg_type": msg_type,
+                        "msg_to": msg_to,
+                        "msg_from": msg_from,
+                        "file":file_name
+                    },
+                    success: function (arg) {
+
+                            $(".send_msg").val("");
+                            var userinfo = $("<div></div>").addClass("user-info").text(msg_from);
+                            var user_talk = $("<div></div>");
+                            user_talk.addClass("user-talk");
+                            user_talk.text(send_msg);
+                            var content = $("<div></div>");
+                            content.addClass("mytalk");
+                            content.append(userinfo);
+                            content.append(user_talk);
+                            $(".right-talk").append(content);
+                            var talk_content = document.getElementsByClassName('right-talk')[0];
+                            talk_content.scrollTop = talk_content.scrollHeight;
+                        }
+
+
+
+                }
+            )
+
         }
+
         function changFriend(arg) {
             var friendID = arg.getElementsByClassName("friend-id")[0].innerHTML;
             var userID = document.getElementsByClassName("username")[0].innerText;
+            $(".friend-name").text(arg.children[0].innerText);
             var _this = this;
-                $.ajax(
-                    {
-                        url:'/get_talk/',
-                        type:'POST',
-                        data:{"userID":userID,"friendID":friendID},
-                        success:function (arg) {
-                            $(".right-talk").empty();
-                            var list = eval(arg);
-                            for(i=0;i<list.length;i++)
-                            {
+            $.ajax(
+                {
+                    url: '/get_talk/',
+                    type: 'POST',
+                    data: {"userID": userID, "friendID": friendID},
+                    success: function (arg) {
+                        $(".right-talk").empty();
+                        var list = eval(arg);
+                        for (i = 0; i < list.length; i++) {
 
-                                if(list[i]["userID"] == userID)
-                                {
-                                    var userinfo = $("<div></div>").addClass("user-info").text(list[i]["friendID__userName"]);
-                                    var user_talk = $("<div></div>");
-                                    user_talk.addClass("user-talk");
-                                    user_talk.text(list[i]["talkInfo"]);
-                                    var content = $("<div></div>");
-                                    content.addClass("mytalk");
-                                    content.append(userinfo);
-                                    content.append(user_talk);
-                                    $(".right-talk").append(content)
-                                }
-                                else
-                                {
-
-                                }
+                            if (list[i]["userID"] == userID) {
+                                var talk_name = "hetalk";
                             }
+                            else {
+                                var talk_name = "mytalk";
+                            }
+                            var userinfo = $("<div></div>").addClass("user-info").text(list[i]["friendID__userName"]);
+                            var user_talk = $("<div></div>");
+                            user_talk.addClass("user-talk");
+                            user_talk.text(list[i]["talkInfo"]);
+                            var content = $("<div></div>");
+                            content.addClass(talk_name);
+                            content.append(userinfo);
+                            content.append(user_talk);
+                            $(".right-talk").append(content);
+                            var talk_content = document.getElementsByClassName('right-talk')[0];
+                            talk_content.scrollTop = talk_content.scrollHeight;
                         }
                     }
-                )
+                }
+            )
+        }
+
+        function refresh() {
+            $.ajax({})
+        }
+
+        {#自动刷新右边栏#}
+        setInterval("refresh()", 10000);
+
+        function uploadFile() {
+            var send_friend = document.getElementsByClassName("friend-name")[0].innerHTML;
+            if (send_friend == "") {
+                alert("未选择人进行聊天啊");
+                return 0
+            }
+            document.getElementById("file").click();
+
         }
     </script>
 </head>
@@ -223,58 +330,73 @@
 
 <div class="outer">
     <div class="bottom">
-        <a class="head-left" href="">个人信息</a><!-- 头像可改 -->
-        <form class="head-left" action="#" method="POST">
-            <input type="text" name="id" size="10px">
-            <input type="submit">
-        </form>
+        <a class="head-left" href="http://localhost:8000/user_detail?user_id={{ username }}"><img
+                style="width: 10%;height: 10% ;margin-top: -4%;margin-left: -1%"
+                src="{% static 'img/user_info_picture/' %}{{ username }}.png" alt=""></a><!-- 头像可改 -->
+        {#        <form class="head-left" action="#" method="POST">#}
+        {#            <input type="text" name="id" size="10px">#}
+        {#            <input type="submit">#}
+        {#        </form>#}
 
         <a class="head-right setting" href="">设置</a>
-        <a class="head-right unlogin" href="">注销</a>
-        <a class="head-right setting username" href="">{{username}}</a>
+        <a class="head-right unlogin" href="/unlogin/">注销</a>
+        <a class="head-right setting username" href="">{{ username }}</a>
     </div>
     <div class="body">
         <div class="body-left">
             <div class="info-outer">
-                <div class="info-inner"></div>
                 {% for each_friend in friend_info_list %}
-                <div class="talk-inner" onclick="changFriend(this)">
-                    <div class="name-inner">{{ each_friend.talk_name }}</div>
-                    <div class="talk-info">{{ each_friend.detail }}</div>
-                    <div class="friend-id" style="display: none">{{ each_friend.id }}</div>
-                    <div class="del-inner">x</div>
-                </div>
+
+                    <div class="info-inner">
+                        <img class="user-img" style="height: 100%;width: 100%"
+                             src="{% static 'img/user_info_picture/' %}{{ each_friend.id }}.png" alt="">
+                    </div>
+
+                    <div class="talk-inner" onclick="changFriend(this)">
+                        <div class="name-inner">{{ each_friend.talk_name }}</div>
+                        <div class="talk-info">{{ each_friend.detail }}</div>
+                        <div class="friend-id" style="display: none">{{ each_friend.id }}</div>
+                        {#                        <div class="del-inner">x</div>#}
+                    </div>
                 {% endfor %}
             </div>
         </div>
         <div class="body-right">
             <div class="right-info">
-                <a href=""><div class="username">{{username}}</div></a>
-                <a href=""><div class="setting">setting</div></a>
+                <div class="friend-name"></div>
+                <a href="">
+                    <div class="setting">setting</div>
+                </a>
             </div>
             <div class="right-talk">
                 <div class="mytalk">
                     {% for each_talk in friend_info_list %}
-                        {% if each_talk. %}
-                    <div class="user-info">
+                        <div class="user-info">
 
-                    </div>
-                    <div class="user-talk">
+                        </div>
+                        <div class="user-talk">
 
-                    </div>
-                </div>
-                <div class="hetalk">
-                    <div class="user-info">
+                        </div>
+                        </div>
+                        <div class="hetalk">
+                            <div class="user-info">
 
-                    </div>
-                    <div class="user-talk">
+                            </div>
+                            <div class="user-talk">
 
-                    </div>
-                </div>
-                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
             </div>
             <div class="right-input">
-                <input type="text" style="height: 80%;width: 100%">
+                <div style="border:gray solid ;border-width:0.5px 0 0 0;display: flex;">
+                    <div style="padding-right: 20px" onclick="uploadFile()">send_file
+                        <input type="file" id="file" name="file" style="display: none">
+                    </div>
+                    <div>send_img</div>
+                </div>
+                <textarea type="text" style="height: 80%;width: 100%;border-width: 0 0 0 0;outline:none;"
+                          class="send_msg"></textarea>
                 <div onclick="send(this)" style="float: right">发送</div>
             </div>
         </div>
