@@ -75,6 +75,7 @@
             left: 0;
             padding-left: 10px;
             color: #d1d6ea;
+            width: 10%;
         }
 
         .head-right {
@@ -112,6 +113,7 @@
             height: 100%;
             white-space: nowrap;
             text-overflow: ellipsis;
+            display: flex;
         }
 
         .del-inner {
@@ -137,7 +139,7 @@
 
         .right-input {
             height: 23%;
-            width: 85%;
+            width: 100%;
             bottom: 0;
             position: absolute;
             right: 0;
@@ -207,6 +209,21 @@
             width: auto;
 
         }
+
+        .hide {
+            display: none;
+        }
+
+        .new{
+            position: absolute;
+            right: 0;
+            color: red;
+            font-size: 0.5px;
+        }
+
+        .user-img{
+            height: 100%;width: 100%
+        }
     </style>
     <script src="{% static 'jquery-3.3.1.js' %}"></script>
     <script>
@@ -216,7 +233,7 @@
             var msg_type = 1;
             var msg_to = $(".friend-name")[0].innerText;
             var msg_from = $(".username")[0].innerText;
-            if (msg_to == ""){
+            if (msg_to == "") {
                 alert("未选定用户");
                 return 1
             }
@@ -225,13 +242,13 @@
                 file_name = document.getElementById("file").files[0].name;
                 var file_data = document.getElementById("file").files[0];
                 var form = new FormData;
-                form.append("files",file_data);
+                form.append("files", file_data);
                 $.ajax({
                     url: '/send_msg/',
                     type: 'POST',
-                    data:form,
-                    contentType:false,
-                    processData:false,
+                    data: form,
+                    contentType: false,
+                    processData: false,
 
                 })
             }
@@ -244,24 +261,24 @@
                         "msg_type": msg_type,
                         "msg_to": msg_to,
                         "msg_from": msg_from,
-                        "file":file_name
+                        "file": file_name
                     },
                     success: function (arg) {
 
-                            $(".send_msg").val("");
-                            var userinfo = $("<div></div>").addClass("user-info").text(msg_from);
-                            var user_talk = $("<div></div>");
-                            user_talk.addClass("user-talk");
-                            user_talk.text(send_msg);
-                            var content = $("<div></div>");
-                            content.addClass("mytalk");
-                            content.append(userinfo);
-                            content.append(user_talk);
-                            $(".right-talk").append(content);
-                            var talk_content = document.getElementsByClassName('right-talk')[0];
-                            talk_content.scrollTop = talk_content.scrollHeight;
-                        }
-
+                        $(".send_msg").val("");
+                        var send_name = $("title")[0].innerText;
+                        var userinfo = $("<div></div>").addClass("user-info").text(send_name);
+                        var user_talk = $("<div></div>");
+                        user_talk.addClass("user-talk");
+                        user_talk.text(send_msg);
+                        var content = $("<div></div>");
+                        content.addClass("mytalk");
+                        content.append(userinfo);
+                        content.append(user_talk);
+                        $(".right-talk").append(content);
+                        var talk_content = document.getElementsByClassName('right-talk')[0];
+                        talk_content.scrollTop = talk_content.scrollHeight;
+                    }
 
 
                 }
@@ -270,6 +287,10 @@
         }
 
         function changFriend(arg) {
+            var is_new =  arg.getElementsByClassName("new");
+            if(is_new.length) {
+                arg.getElementsByClassName("new")[0].setAttribute("class", "hide");
+            }
             var friendID = arg.getElementsByClassName("friend-id")[0].innerHTML;
             var userID = document.getElementsByClassName("username")[0].innerText;
             $(".friend-name").text(arg.children[0].innerText);
@@ -293,7 +314,20 @@
                             var userinfo = $("<div></div>").addClass("user-info").text(list[i]["friendID__userName"]);
                             var user_talk = $("<div></div>");
                             user_talk.addClass("user-talk");
-                            user_talk.text(list[i]["talkInfo"]);
+                            if (list[i]["msgType"] == 1) {
+                                user_talk.text(list[i]["talkInfo"]);
+                            }
+                            else if (list[i]["msgType"] == 2) {
+                                var dist = "{% static 'img/talk_img/' %}" + list[i]["talkInfo"];
+                                var img = $("<img></img>").attr("src", dist);
+                                user_talk.append(img)
+                            }
+                            else if (list[i]["msgType"] == 3) {
+                                var dist = "{% static 'img/send_file/' %}" + list[i]["talkInfo"];
+                                var a = $("<a></a>").attr("href", dist).text(list[i]["talkInfo"]);
+                                user_talk.append(a)
+                            }
+
                             var content = $("<div></div>");
                             content.addClass(talk_name);
                             content.append(userinfo);
@@ -308,11 +342,87 @@
         }
 
         function refresh() {
-            $.ajax({})
+            var friend_list = $(".name-inner");
+            var now_talking = $(".friend-name")[0].innerText;
+            for (i = 0; i < friend_list.length; i++) {
+                if (friend_list[i].innerText == now_talking) {
+                    var talk_people = $(".name-inner").next().next()[i].innerText;
+                    break;
+                }
+            }
+            var my_id = $(".username")[0].innerText;
+
+            $.ajax({
+                url:"/update_friend/",
+                data:{
+                    "id": my_id,
+                    "talking_id":talk_people
+                },
+                type:"POST",
+                success:function (arg) {
+                    console.log(arg);
+                    if(arg=="OK"){
+                        return 1
+                    }
+                    else{
+                        var new_data = eval(arg);
+                        $(".info-outer").empty();
+                        for(i=1;i<new_data.length;i++){
+                            var name = $("<div></div>").addClass("name-inner");
+                            name.text(new_data[i]["talk_name"]);
+                            var last_talk = $("<div></div>");
+                            last_talk.text(new_data[i]["detail"]);
+                            if(new_data[i]["isNew"]){
+                                var is_new = $("<div></div>").addClass("new");
+
+                            }
+                            else {
+                                var is_new = $("<div></div>").addClass("new")
+                            }
+                            is_new.text("new");
+                            if(!new_data[i]["isNew"]){
+                                is_new.addClass("hide")
+                            }
+                            var talk_info = $("<div></div>").addClass("talk-info")[0];
+                            talk_info.append(last_talk[0]);
+                            talk_info.append(is_new[0]);
+                            var id_content = $("<div></div>").addClass("hide").addClass("friend-id");
+                            id_content.text(new_data[i]["id"]);
+                            var talk_content = $("<div></div>").addClass("talk-inner").attr("onclick","changFriend(this)")[0];
+                            talk_content.append(name[0]);
+                            talk_content.append(talk_info);
+                            talk_content.append(id_content[0])
+                            var img_content = $("<img></img>").addClass("user-img").attr("src","{% static 'img/user_info_picture/'%}"+new_data[i]["id"]+".png")[0];
+                            var img_outer = $("<div></div>").addClass("info-inner")[0];
+                            img_outer.append(img_content);
+                            var outer = $("<div></div>")[0];
+                            outer.append(img_outer);
+                            outer.append(talk_content);
+                            $(".info-outer")[0].append(outer);
+                        }
+                        if(new_data[0]){
+                            var talk_name = $(".friend-name")[0].innerText;
+                            var all_talk = document.getElementsByClassName("name-inner");
+                            for(i=0;i<all_talk.length;i++){
+                                if(all_talk[i].innerHTML == talk_name){
+                                    all_talk[i].click();
+                                }
+                            }
+                        }
+                        else {
+
+                        }
+                    }
+                }
+            })
         }
 
-        {#自动刷新右边栏#}
-        setInterval("refresh()", 10000);
+        function load() {
+            arg = document.getElementsByClassName("talk-inner")[0].click();
+            refresh()
+        }
+
+        setInterval("refresh()", 5000);
 
         function uploadFile() {
             var send_friend = document.getElementsByClassName("friend-name")[0].innerHTML;
@@ -326,76 +436,74 @@
     </script>
 </head>
 
-<body>
+<body onload="load()">
 
 <div class="outer">
     <div class="bottom">
-        <a class="head-left" href="http://localhost:8000/user_detail?user_id={{ username }}"><img
-                style="width: 10%;height: 10% ;margin-top: -4%;margin-left: -1%"
-                src="{% static 'img/user_info_picture/' %}{{ username }}.png" alt=""></a><!-- 头像可改 -->
-        {#        <form class="head-left" action="#" method="POST">#}
-        {#            <input type="text" name="id" size="10px">#}
-        {#            <input type="submit">#}
-        {#        </form>#}
+        <a class="head-left" href="http://localhost:8000/user_detail?user_id={{ user_id }}"><img
+                style="width: 30%;height: 30% ;margin-top: -7%;margin-left: -1%"
+                src="{% static 'img/user_info_picture/' %}{{ user_id }}.png" alt=""></a><!-- 头像可改 -->
+                <form class="head-left" action="/find_friend/" method="POST">
+                    <input type="text" name="id" size="10px">
+                    <input type="submit" value="搜索好友">
+                </form>
 
         <a class="head-right setting" href="">设置</a>
         <a class="head-right unlogin" href="/unlogin/">注销</a>
-        <a class="head-right setting username" href="">{{ username }}</a>
+        <a class="head-right setting username" href="">{{ user_id }}</a>
     </div>
     <div class="body">
         <div class="body-left">
             <div class="info-outer">
                 {% for each_friend in friend_info_list %}
-
+                    <div>
                     <div class="info-inner">
-                        <img class="user-img" style="height: 100%;width: 100%"
+                        <img class="user-img"
                              src="{% static 'img/user_info_picture/' %}{{ each_friend.id }}.png" alt="">
                     </div>
 
                     <div class="talk-inner" onclick="changFriend(this)">
                         <div class="name-inner">{{ each_friend.talk_name }}</div>
-                        <div class="talk-info">{{ each_friend.detail }}</div>
-                        <div class="friend-id" style="display: none">{{ each_friend.id }}</div>
+                        <div class="talk-info"><div>{{ each_friend.detail }}</div><div class="new hide">new</div></div>
+                        <div class="hide friend-id" >{{ each_friend.id }}</div>
                         {#                        <div class="del-inner">x</div>#}
+                    </div>
                     </div>
                 {% endfor %}
             </div>
         </div>
         <div class="body-right">
             <div class="right-info">
-                <div class="friend-name"></div>
+                <div class="friend-name">{{ friend_info_list.0.talk_name }}</div>
                 <a href="">
                     <div class="setting">setting</div>
                 </a>
             </div>
             <div class="right-talk">
                 <div class="mytalk">
-                    {% for each_talk in friend_info_list %}
-                        <div class="user-info">
 
-                        </div>
-                        <div class="user-talk">
+                    <div class="user-info">
 
-                        </div>
-                        </div>
-                        <div class="hetalk">
-                            <div class="user-info">
+                    </div>
+                    <div class="user-talk">
+                    </div>
+                </div>
+                <div class="hetalk">
+                    <div class="user-info">
 
-                            </div>
-                            <div class="user-talk">
-
-                            </div>
-                        </div>
-                    {% endfor %}
+                    </div>
+                    <div class="user-talk">
+                    </div>
+                </div>
             </div>
             <div class="right-input">
                 <div style="border:gray solid ;border-width:0.5px 0 0 0;display: flex;">
                     <div style="padding-right: 20px" onclick="uploadFile()">send_file
                         <input type="file" id="file" name="file" style="display: none">
                     </div>
-                    <div>send_img</div>
+                    <div onclick="uploadFile()">send_img</div>
                 </div>
-                <textarea type="text" style="height: 80%;width: 100%;border-width: 0 0 0 0;outline:none;"
+                <textarea type="text" style="height: 100%;width: 80%;border-width: 0 0 0 0;outline:none;"
                           class="send_msg"></textarea>
                 <div onclick="send(this)" style="float: right">发送</div>
             </div>

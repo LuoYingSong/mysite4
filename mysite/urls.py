@@ -28,5 +28,8 @@ urlpatterns = [
     url(r"^send_msg/", views.send_msg),
     url(r"unlogin/", views.unlogin),
     url(r"user_detail", views.user_detail),
-    url(r"change_info",views.change_info)
+    url(r"change_info",views.change_info),
+    url(r"update_friend",views.update_friend),
+    url(r"find_friend",views.find_friend),
+    url(r"add_friend",views.add_friend)
 ]

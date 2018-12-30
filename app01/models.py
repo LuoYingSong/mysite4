@@ -1,5 +1,5 @@
 from django.db import models
-
+import datetime
 # Create your models here.
 
 class user_info(models.Model):
@@ -10,6 +10,8 @@ class user_info(models.Model):
     saying = models.CharField(max_length=52)
     info = models.CharField(max_length=2048,default=None)
     friendsID = models.TextField()
+    login_time = models.DateTimeField(default=datetime.datetime.now())
+    unread_msg = models.TextField(default="")
 
 class talk_info(models.Model):
     userID = models.IntegerField()

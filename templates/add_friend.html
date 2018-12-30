@@ -1,0 +1,45 @@
+{% extends 'base_user_info.html' %}
+{% block js %}
+    <script>
+        function add_friend() {
+            $.ajax({
+                url: "/add_friend/",
+                data: {
+                    "add_id": $(".info-detail")[0].innerText
+                },
+                method: "POST",
+                success: function (arg) {
+document.getElementById("cancel").click();
+                    alert(arg)
+                }
+            })
+        }
+    </script>
+{% endblock %}
+{% block content %}
+    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+        添加好友
+    </button>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">是否添加</h4>
+                </div>
+                <div class="modal-body">
+                    单向添加对方可能会无法接收消息，需要联系对方进行添加
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="add_friend()" title="Popover title"
+                            data-toggle="popover"
+                            data-content="And here's some amazing content. It's very engaging. Right?">添加
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

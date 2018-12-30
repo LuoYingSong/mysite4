@@ -1,0 +1,79 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ user_show_info.userName }}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <script src="{% static 'jquery-3.3.1.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+
+        {% block js %}
+        {% endblock %}
+
+    <style>
+        a{
+            text-decoration: none;
+            font-size: larger;
+            color:gray ;
+        }
+        .container{
+            margin-top: 10%;
+            text-align: center;
+            border: 0;
+            width: 40%;
+            height: auto;
+        }
+
+        .info-container{
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 1%;
+            margin-left: 30%;
+        }
+
+
+        .head{
+            background-image: url("{% static 'img/user_info_picture/' %}{{ user_id }}.png");
+            background-size: 100%  100%;
+            background-repeat: no-repeat;
+            width: 100%;
+            height: 380px;
+            display: flex;
+            flex-direction: row-reverse;
+        }
+        #back{
+            margin-left: 3%;
+            color: black;
+            margin-top: -4px;
+            margin-right: 2%;
+
+        }
+        #change{
+            color: gray;
+        }
+        .info-type{
+            margin-right: 2%;
+            color: #bfbfbf;
+        }
+        {% block css %} {% endblock %}
+    </style>
+</head>
+<body>
+<div>
+    <div class="container">
+        <div class="head">
+            <div id="back"><a href="/main/">x</a></div>
+            <img src='{% static "img/user_info_picture/" %}{{ user_id }}.png' alt="">
+        </div>
+        {% for k,v  in user_show_info.items %}
+        <div class="info-container">
+            <div class="info-type">{{ k }} </div>
+            <div class="info-detail">{{ v }} </div>
+        </div>
+        {% endfor %}
+    {% block content %} {% endblock %}
+    </div>
+</div>
+</body>
+</html>
